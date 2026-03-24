@@ -115,6 +115,8 @@ const COLS=[{id:"inprogress",label:"IN PROGRESS",accent:"#0A84FF"},{id:"nextup",
 const PRIORITIES=[{id:"crush",label:"Crush",emoji:"",color:"#FF9F0A",dot:"#FF9F0A"},{id:"high",label:"High",emoji:"",color:"#FF453A",dot:"#FF453A"},{id:"normal",label:"Normal",emoji:"",color:MUTED,dot:null},{id:"low",label:"Low",emoji:"",color:"#1d9bf0",dot:"#1d9bf0"}];
 const PMAP=Object.fromEntries(PRIORITIES.map(p=>[p.id,p]));
 const GAMEDAY_OPTS=["","GAMEDAY","DAY BEFORE GD","2 DAYS BEFORE GD","3 DAYS BEFORE GD","4 DAYS BEFORE GD","5 DAYS BEFORE GD","6 DAYS BEFORE GD","7 DAYS BEFORE GD","DAY AFTER GD","2 DAYS AFTER GD","3 DAYS AFTER GD","4 DAYS AFTER GD","5 DAYS AFTER GD","6 DAYS AFTER GD","7 DAYS AFTER GD"];
+const TEAM_OPTS=["","REDS","BENGALS","BEARCATS","FCCINCY","CYCLONES","XAVIER"];
+const GAMETIME_OPTS=["","At Game Start","1 Hour Before Game","2 Hours Before Game","Morning of Gameday","Midnight of Gameday","During Game","After Game Ends","Postgame - Win","Postgame - Loss"];
 const DEFAULT_ACTIONS=[{id:"buy",emoji:"🛒",label:"Buy"},{id:"call",emoji:"📞",label:"Call"},{id:"email",emoji:"📧",label:"Email"},{id:"research",emoji:"🔍",label:"Research"},{id:"review",emoji:"👁",label:"Review"},{id:"schedule",emoji:"📅",label:"Schedule"},{id:"watch",emoji:"👀",label:"Watch"},{id:"read",emoji:"📖",label:"Read"},{id:"fix",emoji:"🔧",label:"Fix"},{id:"build",emoji:"🏗",label:"Build"},{id:"plan",emoji:"📋",label:"Plan"},{id:"pay",emoji:"💳",label:"Pay"}];
 const WDN=["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
 const WDL=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -196,9 +198,9 @@ const dueLabel=dd=>{
   if(diff===1)return{text:"Do tomorrow",color:"#FF9F0A",weight:600};
   return{text:`Do in ${diff} days`,color:MUTED,weight:400};
 };
-const dbToTask=r=>({id:r.id,title:r.title||"",notes:r.notes||"",status:r.status||"list",priority:r.priority||"normal",bucketId:r.bucket_id||null,dueDate:r.due_date||null,time:r.time?r.time.slice(0,5):"",frequency:r.frequency||"",duration:r.duration||"",link:r.link||"",attachments:r.attachments||[],manualOrder:Number(r.manual_order)||Date.now(),completionLog:r.completion_log||[],done:r.done||false,eventDate:r.event_date||null,action:r.action||'',brand:r.brand||'',gameday:r.gameday||'',person:r.person||'',isRef:r.is_ref||false,keepLink:r.keep_link||'',notifyMins:r.notify_mins!=null?r.notify_mins:null,labels:r.labels||[],mundane:r.mundane===true||r.mundane==='true',device:r.device||'',sprintId:r.sprint_id||''});
-const t2db=(t,bid)=>({id:t.id,board_id:bid,title:t.title,notes:t.notes,status:t.status,priority:t.priority,bucket_id:t.bucketId||null,due_date:t.dueDate||null,time:t.time||null,frequency:t.frequency,duration:t.duration,link:t.link||null,attachments:t.attachments||[],manual_order:t.manualOrder,completion_log:t.completionLog,done:t.done||false,event_date:t.eventDate||null,action:t.action||null,brand:t.brand||null,gameday:t.gameday||null,person:t.person||null,is_ref:t.isRef||false,keep_link:t.keepLink||null,labels:t.labels||[],mundane:t.mundane||false,device:t.device||null,sprint_id:t.sprintId||null});
-const mkTask=(status,bid)=>({id:genId(),title:"",notes:"",status,priority:"normal",bucketId:null,dueDate:todayStr(),time:"",frequency:"",duration:"",link:"",attachments:[],manualOrder:Date.now(),completionLog:[],done:false,eventDate:null,action:'',brand:'',gameday:'',person:'',isRef:false,keepLink:'',notifyMins:null,labels:[],mundane:false,device:'',sprintId:'',boardId:bid});
+const dbToTask=r=>({id:r.id,title:r.title||"",notes:r.notes||"",status:r.status||"list",priority:r.priority||"normal",bucketId:r.bucket_id||null,dueDate:r.due_date||null,time:r.time?r.time.slice(0,5):"",frequency:r.frequency||"",duration:r.duration||"",link:r.link||"",attachments:r.attachments||[],manualOrder:Number(r.manual_order)||Date.now(),completionLog:r.completion_log||[],done:r.done||false,eventDate:r.event_date||null,action:r.action||'',brand:r.brand||'',gameday:r.gameday||'',person:r.person||'',isRef:r.is_ref||false,keepLink:r.keep_link||'',notifyMins:r.notify_mins!=null?r.notify_mins:null,labels:r.labels||[],mundane:r.mundane===true||r.mundane==='true',device:r.device||'',sprintId:r.sprint_id||'',team:r.team||'',gametime:r.gametime||''});
+const t2db=(t,bid)=>({id:t.id,board_id:bid,title:t.title,notes:t.notes,status:t.status,priority:t.priority,bucket_id:t.bucketId||null,due_date:t.dueDate||null,time:t.time||null,frequency:t.frequency,duration:t.duration,link:t.link||null,attachments:t.attachments||[],manual_order:t.manualOrder,completion_log:t.completionLog,done:t.done||false,event_date:t.eventDate||null,action:t.action||null,brand:t.brand||null,gameday:t.gameday||null,person:t.person||null,is_ref:t.isRef||false,keep_link:t.keepLink||null,labels:t.labels||[],mundane:t.mundane||false,device:t.device||null,sprint_id:t.sprintId||null,team:t.team||null,gametime:t.gametime||null});
+const mkTask=(status,bid)=>({id:genId(),title:"",notes:"",status,priority:"normal",bucketId:null,dueDate:todayStr(),time:"",frequency:"",duration:"",link:"",attachments:[],manualOrder:Date.now(),completionLog:[],done:false,eventDate:null,action:'',brand:'',gameday:'',person:'',isRef:false,keepLink:'',notifyMins:null,labels:[],mundane:false,device:'',sprintId:'',team:'',gametime:'',boardId:bid});
 const taskDaysSinceDone=t=>{
   if(!t.completionLog||!t.completionLog.length)return null;
   const last=[...t.completionLog].sort((a,b)=>b.doneAt.localeCompare(a.doneAt))[0];
@@ -1332,7 +1334,7 @@ function EditMdl({task,tasks,buckets,actions,brands,persons,labels,devices,onSav
   const bLbl={display:"block",fontSize:10,fontWeight:600,color:em,letterSpacing:1.2,textTransform:"uppercase",marginBottom:5};
   const bInp={width:"100%",padding:"9px 11px",borderRadius:8,border:`1px solid ${eb}`,fontSize:13,fontFamily:"inherit",color:et,background:ei,marginBottom:12,boxSizing:"border-box",outline:"none"};
   const bSel={...{width:"100%",padding:"9px 11px",borderRadius:8,border:`1px solid ${eb}`,fontSize:13,fontFamily:"inherit",color:et,background:ei,marginBottom:12,boxSizing:"border-box",outline:"none"},cursor:"pointer"};
-  const [f,setF]=useState({...task,completionLog:task.completionLog||[],bucketId:task.bucketId||null,duration:task.duration||"",time:task.time||"",link:task.link||"",attachments:task.attachments||[],priority:task.priority||"normal",eventDate:task.eventDate||"",action:task.action||"",brand:task.brand||"",gameday:task.gameday||"",person:task.person||"",labels:task.labels||[],keepLink:task.keepLink||"",notifyMins:task.notifyMins!=null?task.notifyMins:null,mundane:task.mundane||false,device:task.device||"",sprintId:task.sprintId||""});
+  const [f,setF]=useState({...task,completionLog:task.completionLog||[],bucketId:task.bucketId||null,duration:task.duration||"",time:task.time||"",link:task.link||"",attachments:task.attachments||[],priority:task.priority||"normal",eventDate:task.eventDate||"",action:task.action||"",brand:task.brand||"",gameday:task.gameday||"",person:task.person||"",labels:task.labels||[],keepLink:task.keepLink||"",notifyMins:task.notifyMins!=null?task.notifyMins:null,mundane:task.mundane||false,device:task.device||"",sprintId:task.sprintId||"",team:task.team||"",gametime:task.gametime||""});
   const [editingLink,setEditingLink]=useState(false);
   const [showMore,setShowMore]=useState(false);
   const set=(k,v)=>setF(x=>({...x,[k]:v}));
@@ -1540,6 +1542,21 @@ function EditMdl({task,tasks,buckets,actions,brands,persons,labels,devices,onSav
               <label style={bLbl}>Gameday</label>
               <select value={f.gameday||""} onChange={e=>set("gameday",e.target.value)} disabled={readOnly} style={{...selS,marginBottom:0}}>
                 {GAMEDAY_OPTS.map(o=><option key={o} value={o}>{o||"None"}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:12}}>
+            <div>
+              <label style={bLbl}>🏈 Team</label>
+              <select value={f.team||""} onChange={e=>set("team",e.target.value)} disabled={readOnly} style={{...selS,marginBottom:0}}>
+                {TEAM_OPTS.map(o=><option key={o} value={o}>{o||"None"}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={bLbl}>⏱ Gametime</label>
+              <select value={f.gametime||""} onChange={e=>set("gametime",e.target.value)} disabled={readOnly} style={{...selS,marginBottom:0}}>
+                {GAMETIME_OPTS.map(o=><option key={o} value={o}>{o||"None"}</option>)}
               </select>
             </div>
           </div>
@@ -3780,7 +3797,7 @@ function Sidebar({viewMode,onView,onClose,onBack,onBoards,onSettings,onDisplay,o
   );
 }
 
-const GAMEDAY_TEAMS=["REDS","BENGALS","BEARCATS","FCCINCY"];
+const GAMEDAY_TEAMS=["REDS","BENGALS","BEARCATS","FCCINCY","CYCLONES","XAVIER"];
 const GD_STORAGE_KEY="cin_gameday_context";
 const loadGdCtx=()=>{try{return JSON.parse(localStorage.getItem(GD_STORAGE_KEY)||"{}");}catch{return{};}};
 const saveGdCtx=ctx=>{try{localStorage.setItem(GD_STORAGE_KEY,JSON.stringify(ctx));}catch{}};
@@ -3832,17 +3849,17 @@ function GamedayView({tasks,buckets,onEdit,onCheck,onDelete,celebratingIds,readO
   // Filter tasks: must have a gameday field
   const allGdTasks=tasks.filter(t=>!t.isRef&&t.gameday&&t.gameday.trim());
 
-  // Apply team tab filter (by brand field)
-  const teamFiltered=teamTab==="ALL"?allGdTasks:allGdTasks.filter(t=>(t.brand||"").toUpperCase()===teamTab);
+  // Apply team tab filter (by team field)
+  const teamFiltered=teamTab==="ALL"?allGdTasks:allGdTasks.filter(t=>(t.team||"").toUpperCase()===teamTab);
 
-  // Apply game context filter: only show tasks whose gameday matches the active context for their brand
+  // Apply game context filter: only show tasks whose gameday matches the active context for their team
   // If no context is set for any team, show everything (so you can still browse)
   const hasAnyContext=activeTeams.length>0;
   const ctxFiltered=hasAnyContext
     ? teamFiltered.filter(t=>{
-        const brand=(t.brand||"").toUpperCase();
-        if(!brand)return false;
-        const ctxDay=gdCtx[brand];
+        const team=(t.team||"").toUpperCase();
+        if(!team)return false;
+        const ctxDay=gdCtx[team];
         if(!ctxDay)return false;
         return t.gameday===ctxDay;
       })
@@ -3856,7 +3873,7 @@ function GamedayView({tasks,buckets,onEdit,onCheck,onDelete,celebratingIds,readO
   const allKeys=[...orderedKeys,...unmatched];
 
   const teamTabs=["ALL",...GAMEDAY_TEAMS];
-  const teamColors={REDS:"#FF453A",BENGALS:"#FF9F0A",BEARCATS:"#BF5AF2",FCCINCY:"#0A84FF",ALL:gdLime};
+  const teamColors={REDS:"#FF453A",BENGALS:"#FF9F0A",BEARCATS:"#BF5AF2",FCCINCY:"#0A84FF",CYCLONES:"#30D158",XAVIER:"#FF6B35",ALL:gdLime};
 
   const Sec=({gdKey,items})=>(
     <div style={{marginBottom:22}}>
