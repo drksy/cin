@@ -198,9 +198,9 @@ const dueLabel=dd=>{
   if(diff===1)return{text:"Do tomorrow",color:"#FF9F0A",weight:600};
   return{text:`Do in ${diff} days`,color:MUTED,weight:400};
 };
-const dbToTask=r=>({id:r.id,title:r.title||"",notes:r.notes||"",status:r.status||"list",priority:r.priority||"normal",bucketId:r.bucket_id||null,dueDate:r.due_date||null,time:r.time?r.time.slice(0,5):"",frequency:r.frequency||"",duration:r.duration||"",link:r.link||"",attachments:r.attachments||[],manualOrder:Number(r.manual_order)||Date.now(),completionLog:r.completion_log||[],done:r.done||false,eventDate:r.event_date||null,action:r.action||'',brand:r.brand||'',gameday:r.gameday||'',person:r.person||'',isRef:r.is_ref||false,keepLink:r.keep_link||'',notifyMins:r.notify_mins!=null?r.notify_mins:null,labels:r.labels||[],mundane:r.mundane===true||r.mundane==='true',device:r.device||'',sprintId:r.sprint_id||'',team:r.team||'',gametime:r.gametime||''});
-const t2db=(t,bid)=>({id:t.id,board_id:bid,title:t.title,notes:t.notes,status:t.status,priority:t.priority,bucket_id:t.bucketId||null,due_date:t.dueDate||null,time:t.time||null,frequency:t.frequency,duration:t.duration,link:t.link||null,attachments:t.attachments||[],manual_order:t.manualOrder,completion_log:t.completionLog,done:t.done||false,event_date:t.eventDate||null,action:t.action||null,brand:t.brand||null,gameday:t.gameday||null,person:t.person||null,is_ref:t.isRef||false,keep_link:t.keepLink||null,labels:t.labels||[],mundane:t.mundane||false,device:t.device||null,sprint_id:t.sprintId||null,team:t.team||null,gametime:t.gametime||null});
-const mkTask=(status,bid)=>({id:genId(),title:"",notes:"",status,priority:"normal",bucketId:null,dueDate:todayStr(),time:"",frequency:"",duration:"",link:"",attachments:[],manualOrder:Date.now(),completionLog:[],done:false,eventDate:null,action:'',brand:'',gameday:'',person:'',isRef:false,keepLink:'',notifyMins:null,labels:[],mundane:false,device:'',sprintId:'',team:'',gametime:'',boardId:bid});
+const dbToTask=r=>({id:r.id,title:r.title||"",notes:r.notes||"",status:r.status||"list",priority:r.priority||"normal",bucketId:r.bucket_id||null,dueDate:r.due_date||null,time:r.time?r.time.slice(0,5):"",frequency:r.frequency||"",duration:r.duration||"",link:r.link||"",attachments:r.attachments||[],manualOrder:Number(r.manual_order)||Date.now(),completionLog:r.completion_log||[],done:r.done||false,eventDate:r.event_date||null,action:r.action||'',brand:r.brand||'',gameday:r.gameday||'',person:r.person||'',isRef:r.is_ref||false,keepLink:r.keep_link||'',notifyMins:r.notify_mins!=null?r.notify_mins:null,labels:r.labels||[],mundane:r.mundane===true||r.mundane==='true',device:r.device||'',sprintId:r.sprint_id||'',team:r.team||'',gametime:r.gametime||'',search:r.search||'',template:r.template||''});
+const t2db=(t,bid)=>({id:t.id,board_id:bid,title:t.title,notes:t.notes,status:t.status,priority:t.priority,bucket_id:t.bucketId||null,due_date:t.dueDate||null,time:t.time||null,frequency:t.frequency,duration:t.duration,link:t.link||null,attachments:t.attachments||[],manual_order:t.manualOrder,completion_log:t.completionLog,done:t.done||false,event_date:t.eventDate||null,action:t.action||null,brand:t.brand||null,gameday:t.gameday||null,person:t.person||null,is_ref:t.isRef||false,keep_link:t.keepLink||null,labels:t.labels||[],mundane:t.mundane||false,device:t.device||null,sprint_id:t.sprintId||null,team:t.team||null,gametime:t.gametime||null,search:t.search||null,template:t.template||null});
+const mkTask=(status,bid)=>({id:genId(),title:"",notes:"",status,priority:"normal",bucketId:null,dueDate:todayStr(),time:"",frequency:"",duration:"",link:"",attachments:[],manualOrder:Date.now(),completionLog:[],done:false,eventDate:null,action:'',brand:'',gameday:'',person:'',isRef:false,keepLink:'',notifyMins:null,labels:[],mundane:false,device:'',sprintId:'',team:'',gametime:'',search:'',template:'',boardId:bid});
 const taskDaysSinceDone=t=>{
   if(!t.completionLog||!t.completionLog.length)return null;
   const last=[...t.completionLog].sort((a,b)=>b.doneAt.localeCompare(a.doneAt))[0];
@@ -1334,7 +1334,7 @@ function EditMdl({task,tasks,buckets,actions,brands,persons,labels,devices,onSav
   const bLbl={display:"block",fontSize:10,fontWeight:600,color:em,letterSpacing:1.2,textTransform:"uppercase",marginBottom:5};
   const bInp={width:"100%",padding:"9px 11px",borderRadius:8,border:`1px solid ${eb}`,fontSize:13,fontFamily:"inherit",color:et,background:ei,marginBottom:12,boxSizing:"border-box",outline:"none"};
   const bSel={...{width:"100%",padding:"9px 11px",borderRadius:8,border:`1px solid ${eb}`,fontSize:13,fontFamily:"inherit",color:et,background:ei,marginBottom:12,boxSizing:"border-box",outline:"none"},cursor:"pointer"};
-  const [f,setF]=useState({...task,completionLog:task.completionLog||[],bucketId:task.bucketId||null,duration:task.duration||"",time:task.time||"",link:task.link||"",attachments:task.attachments||[],priority:task.priority||"normal",eventDate:task.eventDate||"",action:task.action||"",brand:task.brand||"",gameday:task.gameday||"",person:task.person||"",labels:task.labels||[],keepLink:task.keepLink||"",notifyMins:task.notifyMins!=null?task.notifyMins:null,mundane:task.mundane||false,device:task.device||"",sprintId:task.sprintId||"",team:task.team||"",gametime:task.gametime||""});
+  const [f,setF]=useState({...task,completionLog:task.completionLog||[],bucketId:task.bucketId||null,duration:task.duration||"",time:task.time||"",link:task.link||"",attachments:task.attachments||[],priority:task.priority||"normal",eventDate:task.eventDate||"",action:task.action||"",brand:task.brand||"",gameday:task.gameday||"",person:task.person||"",labels:task.labels||[],keepLink:task.keepLink||"",notifyMins:task.notifyMins!=null?task.notifyMins:null,mundane:task.mundane||false,device:task.device||"",sprintId:task.sprintId||"",team:task.team||"",gametime:task.gametime||"",search:task.search||"",template:task.template||""});
   const [editingLink,setEditingLink]=useState(false);
   const [showMore,setShowMore]=useState(false);
   const set=(k,v)=>setF(x=>({...x,[k]:v}));
@@ -1485,6 +1485,25 @@ function EditMdl({task,tasks,buckets,actions,brands,persons,labels,devices,onSav
                 {(f.keepLink&&f.keepLink.trim())?<a href={f.keepLink.startsWith("http")?f.keepLink:"https://"+f.keepLink} target="_blank" rel="noopener" style={{display:"inline-flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:7,border:"1px solid #1a5c6a",background:"#071014",color:"#4ECDC4",textDecoration:"none",fontSize:11,fontWeight:600,cursor:"pointer",flexShrink:0,whiteSpace:"nowrap"}} onMouseEnter={e=>e.currentTarget.style.background="#0d2030"} onMouseLeave={e=>e.currentTarget.style.background="#071014"}>📌 Open</a>:null}
                 {!readOnly&&<input value={f.keepLink||""} onChange={e=>set("keepLink",e.target.value)} placeholder="Keep URL…" style={{...bInp,marginBottom:0,flex:1,fontSize:11,height:32,minWidth:0}} onFocus={FL} onBlur={FB}/>}
                 {readOnly&&!(f.keepLink&&f.keepLink.trim())&&<span style={{fontSize:11,color:MUTED,fontStyle:"italic"}}>No link</span>}
+              </div>
+            </div>
+          </div>
+          {/* Search + Template */}
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:12}}>
+            <div>
+              <label style={bLbl}>Search 🔍</label>
+              <div style={{display:"flex",gap:5,alignItems:"center",height:32}}>
+                {(f.search&&f.search.trim())?<a href={f.search.startsWith("http")?f.search:"https://"+f.search} target="_blank" rel="noopener" style={{display:"inline-flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:7,border:"1px solid #1a5c6a",background:"#071014",color:"#4ECDC4",textDecoration:"none",fontSize:11,fontWeight:600,cursor:"pointer",flexShrink:0,whiteSpace:"nowrap"}} onMouseEnter={e=>e.currentTarget.style.background="#0d2030"} onMouseLeave={e=>e.currentTarget.style.background="#071014"}>🔍 Open</a>:null}
+                {!readOnly&&<input value={f.search||""} onChange={e=>set("search",e.target.value)} placeholder="Search URL…" style={{...bInp,marginBottom:0,flex:1,fontSize:11,height:32,minWidth:0}} onFocus={FL} onBlur={FB}/>}
+                {readOnly&&!(f.search&&f.search.trim())&&<span style={{fontSize:11,color:MUTED,fontStyle:"italic"}}>No link</span>}
+              </div>
+            </div>
+            <div>
+              <label style={bLbl}>Template 📋</label>
+              <div style={{display:"flex",gap:5,alignItems:"center",height:32}}>
+                {(f.template&&f.template.trim())?<a href={f.template.startsWith("http")?f.template:"https://"+f.template} target="_blank" rel="noopener" style={{display:"inline-flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:7,border:"1px solid #1a5c6a",background:"#071014",color:"#4ECDC4",textDecoration:"none",fontSize:11,fontWeight:600,cursor:"pointer",flexShrink:0,whiteSpace:"nowrap"}} onMouseEnter={e=>e.currentTarget.style.background="#0d2030"} onMouseLeave={e=>e.currentTarget.style.background="#071014"}>📋 Open</a>:null}
+                {!readOnly&&<input value={f.template||""} onChange={e=>set("template",e.target.value)} placeholder="Template URL…" style={{...bInp,marginBottom:0,flex:1,fontSize:11,height:32,minWidth:0}} onFocus={FL} onBlur={FB}/>}
+                {readOnly&&!(f.template&&f.template.trim())&&<span style={{fontSize:11,color:MUTED,fontStyle:"italic"}}>No link</span>}
               </div>
             </div>
           </div>
@@ -1701,6 +1720,15 @@ function TaskCard({task,buckets,onEdit,onDelete,onCheck,onDuplicate,showBucket,o
                 )}
               </div>
               {sFreq&&fl&&<span style={{fontSize:10,color:isWord?"#4ECDC4":"#333",flexShrink:0,marginLeft:8,fontWeight:isWord?600:400}}>{fl}</span>}
+              {/* URL quick-access icons */}
+              {(task.link||task.keepLink||task.search||task.template)&&(
+                <div style={{display:"flex",gap:4,flexShrink:0,marginLeft:4}}>
+                  {task.link&&task.link.trim()&&<a href={task.link.startsWith("http")?task.link:"https://"+task.link} target="_blank" rel="noopener" onClick={e=>e.stopPropagation()} style={{fontSize:13,color:"#4ECDC4",textDecoration:"none",lineHeight:1,opacity:.8,transition:"opacity .15s"}} onMouseEnter={e=>e.currentTarget.style.opacity=1} onMouseLeave={e=>e.currentTarget.style.opacity=.8} title="Link">🔗</a>}
+                  {task.keepLink&&task.keepLink.trim()&&<a href={task.keepLink.startsWith("http")?task.keepLink:"https://"+task.keepLink} target="_blank" rel="noopener" onClick={e=>e.stopPropagation()} style={{fontSize:13,color:"#4ECDC4",textDecoration:"none",lineHeight:1,opacity:.8,transition:"opacity .15s"}} onMouseEnter={e=>e.currentTarget.style.opacity=1} onMouseLeave={e=>e.currentTarget.style.opacity=.8} title="Keep">📌</a>}
+                  {task.search&&task.search.trim()&&<a href={task.search.startsWith("http")?task.search:"https://"+task.search} target="_blank" rel="noopener" onClick={e=>e.stopPropagation()} style={{fontSize:13,color:"#4ECDC4",textDecoration:"none",lineHeight:1,opacity:.8,transition:"opacity .15s"}} onMouseEnter={e=>e.currentTarget.style.opacity=1} onMouseLeave={e=>e.currentTarget.style.opacity=.8} title="Search">🔍</a>}
+                  {task.template&&task.template.trim()&&<a href={task.template.startsWith("http")?task.template:"https://"+task.template} target="_blank" rel="noopener" onClick={e=>e.stopPropagation()} style={{fontSize:13,color:"#4ECDC4",textDecoration:"none",lineHeight:1,opacity:.8,transition:"opacity .15s"}} onMouseEnter={e=>e.currentTarget.style.opacity=1} onMouseLeave={e=>e.currentTarget.style.opacity=.8} title="Template">📋</a>}
+                </div>
+              )}
               {_deltaTally!==null&&<span style={{fontSize:10,fontWeight:700,color:_deltaTally<0?"#FF453A":_deltaTally===0?"#FF9F0A":"#30D158",flexShrink:0,marginLeft:4}} title="Δ Tally: how many times you're ahead (+) or behind (-) schedule">Δ{_deltaTally>0?"+":""}{_deltaTally}</span>}
               {(()=>{const dsd=taskDaysSinceDone(task);if(dsd===null||!hasFreq)return null;const freqN=freqToNum(task.frequency);if(freqN===null)return null;const col=dsd>freqN*1.5?"#FF453A":dsd>freqN?"#FF9F0A":"#555";return<span style={{fontSize:9,color:col,flexShrink:0,marginLeft:3}} title={`Last done ${dsd} day${dsd!==1?"s":""} ago`}>↩{dsd}d</span>;})()}
             </div>
@@ -3801,33 +3829,56 @@ const GAMEDAY_TEAMS=["REDS","BENGALS","BEARCATS","FCCINCY","CYCLONES","XAVIER"];
 const GD_STORAGE_KEY="cin_gameday_context";
 const loadGdCtx=()=>{try{return JSON.parse(localStorage.getItem(GD_STORAGE_KEY)||"{}");}catch{return{};}};
 const saveGdCtx=ctx=>{try{localStorage.setItem(GD_STORAGE_KEY,JSON.stringify(ctx));}catch{}};
+const TEAM_COLORS={REDS:"#FF453A",BENGALS:"#FF9F0A",BEARCATS:"#BF5AF2",FCCINCY:"#0A84FF",CYCLONES:"#30D158",XAVIER:"#FF6B35"};
+const getGamedayLabel=(dateStr)=>{if(!dateStr)return null;const diff=daysDiff(dateStr);if(diff===0)return"GAMEDAY";if(diff===1)return"DAY BEFORE GD";if(diff===2)return"2 DAYS BEFORE GD";if(diff===3)return"3 DAYS BEFORE GD";if(diff===4)return"4 DAYS BEFORE GD";if(diff===5)return"5 DAYS BEFORE GD";if(diff===6)return"6 DAYS BEFORE GD";if(diff===7)return"7 DAYS BEFORE GD";if(diff===-1)return"DAY AFTER GD";if(diff===-2)return"2 DAYS AFTER GD";if(diff===-3)return"3 DAYS AFTER GD";if(diff===-4)return"4 DAYS AFTER GD";if(diff===-5)return"5 DAYS AFTER GD";if(diff===-6)return"6 DAYS AFTER GD";if(diff===-7)return"7 DAYS AFTER GD";return null;};
+const GAMETIME_ORDER_MAP={"Midnight of Gameday":0,"Morning of Gameday":1,"2 Hours Before Game":2,"1 Hour Before Game":3,"At Game Start":4,"During Game":5,"After Game Ends":6,"Postgame - Win":7,"Postgame - Loss":8};
+const sortByGametime=tasks=>[...tasks].sort((a,b)=>{const ai=GAMETIME_ORDER_MAP[a.gametime||""]??99,bi=GAMETIME_ORDER_MAP[b.gametime||""]??99;if(ai!==bi)return ai-bi;const at=a.time?t2m(a.time):9999,bt=b.time?t2m(b.time):9999;return at-bt;});
 
 function GamedayContextModal({onClose,onSave,initial}){
-  const {border:mb,cardBg:mc,text:mt,muted:mm,inp:mi,lm:gLm}=useTheme();
+  const {border:mb,cardBg:mc,text:mt,muted:mm,inp:mi}=useTheme();
   const [ctx,setCtx]=useState({...initial});
   const set=(team,val)=>setCtx(c=>({...c,[team]:val}));
-  const dayOpts=[{value:"",label:"— No game —"},...GAMEDAY_OPTS.filter(o=>o).map(o=>({value:o,label:o}))];
   return(
     <div onClick={e=>{if(e.target===e.currentTarget)onClose();}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.85)",backdropFilter:"blur(6px)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
-      <div style={{background:mc,borderRadius:16,width:"100%",maxWidth:400,border:`1px solid ${mb}`,boxShadow:"0 32px 80px rgba(0,0,0,.95)",overflow:"hidden"}}>
-        <div style={{padding:"16px 18px 12px",borderBottom:`1px solid ${mb}`,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-          <span style={{fontWeight:800,fontSize:15,color:mt}}>🏈 Set Game Context</span>
+      <div style={{background:mc,borderRadius:16,width:"100%",maxWidth:420,border:`1px solid ${mb}`,boxShadow:"0 32px 80px rgba(0,0,0,.95)",display:"flex",flexDirection:"column",maxHeight:"92vh"}}>
+        <div style={{padding:"16px 18px 12px",borderBottom:`1px solid ${mb}`,display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
+          <span style={{fontWeight:800,fontSize:15,color:mt}}>🏈 Set Game Dates</span>
           <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",fontSize:16,color:mm}}>✕</button>
         </div>
-        <div style={{padding:"14px 18px"}}>
-          <div style={{fontSize:11,color:mm,marginBottom:14,lineHeight:1.5}}>For each team, select what today is relative to their game. This filters the Gameday view to show the right tasks.</div>
-          {GAMEDAY_TEAMS.map(team=>(
-            <div key={team} style={{marginBottom:10}}>
-              <div style={{fontSize:11,fontWeight:700,color:LIME,letterSpacing:.8,textTransform:"uppercase",marginBottom:4}}>{team}</div>
-              <select value={ctx[team]||""} onChange={e=>set(team,e.target.value)} style={{width:"100%",padding:"9px 11px",borderRadius:8,border:`1px solid ${mb}`,background:mi,color:mt,fontSize:13,fontFamily:"inherit",outline:"none",cursor:"pointer"}}>
-                {dayOpts.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </div>
-          ))}
+        <div style={{padding:"14px 18px",overflowY:"auto",flex:1}}>
+          <div style={{fontSize:11,color:mm,marginBottom:14,lineHeight:1.5}}>Enter the actual game date for each team. The app auto-calculates Gameday, Day Before, 4 Days Before, etc. — no manual selection needed.</div>
+          {GAMEDAY_TEAMS.map(team=>{
+            const color=TEAM_COLORS[team]||LIME;
+            const gameDate=ctx[team]||"";
+            const label=gameDate?getGamedayLabel(gameDate):null;
+            const diff=gameDate?daysDiff(gameDate):null;
+            return(
+              <div key={team} style={{marginBottom:10,padding:"10px 12px",borderRadius:10,border:`1px solid ${gameDate?(label?color+"55":color+"22"):mb}`,background:gameDate&&label?color+"08":"transparent"}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6}}>
+                  <span style={{fontSize:12,fontWeight:800,color,letterSpacing:.8,textTransform:"uppercase"}}>{team}</span>
+                  {label&&<span style={{fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:99,background:color+"33",color,border:`1px solid ${color}55`}}>{label}</span>}
+                  {gameDate&&!label&&diff!==null&&<span style={{fontSize:10,color:mm}}>{Math.abs(diff)}d {diff>0?"until":"after"} game</span>}
+                </div>
+                <div style={{display:"flex",gap:7,alignItems:"center"}}>
+                  <input type="date" value={gameDate} onChange={e=>set(team,e.target.value)} style={{flex:1,padding:"7px 10px",borderRadius:8,border:`1px solid ${gameDate?"#444":mb}`,background:mi,color:mt,fontSize:13,fontFamily:"inherit",outline:"none",colorScheme:"dark"}}/>
+                  {gameDate&&<button onClick={()=>set(team,"")} style={{padding:"6px 10px",borderRadius:7,border:`1px solid ${mb}`,background:"transparent",color:mm,cursor:"pointer",fontSize:11,fontFamily:"inherit",flexShrink:0}}>✕</button>}
+                </div>
+                {gameDate&&diff!==null&&(
+                  <div style={{fontSize:10,color:mm,marginTop:4}}>
+                    {diff===0&&<span style={{color,fontWeight:700}}>🏈 Game is TODAY</span>}
+                    {diff>0&&diff<=7&&<span>Game in <b style={{color}}>{diff}</b> day{diff!==1?"s":""} — today = <b style={{color}}>{label}</b></span>}
+                    {diff>7&&<span>Game in {diff} days (outside 7-day window)</span>}
+                    {diff<0&&Math.abs(diff)<=7&&<span><b style={{color}}>{Math.abs(diff)}</b> day{Math.abs(diff)!==1?"s":""} since game — today = <b style={{color}}>{label}</b></span>}
+                    {diff<0&&Math.abs(diff)>7&&<span>{Math.abs(diff)} days after game (outside window)</span>}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
-        <div style={{padding:"12px 18px 18px",borderTop:`1px solid ${mb}`,display:"flex",gap:8}}>
-          <button onClick={()=>{const cleared={};GAMEDAY_TEAMS.forEach(t=>{cleared[t]="";});onSave(cleared);}} style={{flex:1,padding:"10px",borderRadius:9,border:`1px solid ${mb}`,background:"transparent",color:mm,cursor:"pointer",fontFamily:"inherit",fontSize:12}}>Clear All</button>
-          <button onClick={()=>onSave(ctx)} style={{flex:2,padding:"10px",borderRadius:9,border:"none",background:LIME,color:"#000",cursor:"pointer",fontWeight:700,fontFamily:"inherit",fontSize:13}}>Save Context</button>
+        <div style={{padding:"12px 18px 18px",borderTop:`1px solid ${mb}`,display:"flex",gap:8,flexShrink:0}}>
+          <button onClick={()=>{const c={};GAMEDAY_TEAMS.forEach(t=>{c[t]="";});onSave(c);}} style={{flex:1,padding:"10px",borderRadius:9,border:`1px solid ${mb}`,background:"transparent",color:mm,cursor:"pointer",fontFamily:"inherit",fontSize:12}}>Clear All</button>
+          <button onClick={()=>onSave(ctx)} style={{flex:2,padding:"10px",borderRadius:9,border:"none",background:LIME,color:"#000",cursor:"pointer",fontWeight:700,fontFamily:"inherit",fontSize:13}}>Save</button>
         </div>
       </div>
     </div>
@@ -3835,7 +3886,7 @@ function GamedayContextModal({onClose,onSave,initial}){
 }
 
 function GamedayView({tasks,buckets,onEdit,onCheck,onDelete,celebratingIds,readOnly,onAddTask,boardId}){
-  const {navBg:gdNav,border:gdBo,lm:gdLm,limeText:gdLime,text:gdTx,muted:gdMu,cardBg:gdCard}=useTheme();
+  const {navBg:gdNav,border:gdBo,lm:gdLm,limeText:gdLime,text:gdTx,muted:gdMu}=useTheme();
   const [teamTab,setTeamTab]=useState("ALL");
   const [gdCtx,setGdCtx]=useState(loadGdCtx);
   const [showCtxModal,setShowCtxModal]=useState(false);
@@ -3843,75 +3894,64 @@ function GamedayView({tasks,buckets,onEdit,onCheck,onDelete,celebratingIds,readO
 
   const saveCtx=ctx=>{setGdCtx(ctx);saveGdCtx(ctx);setShowCtxModal(false);};
 
-  // Active teams: those with a context set
-  const activeTeams=GAMEDAY_TEAMS.filter(t=>gdCtx[t]&&gdCtx[t].trim());
-
-  // Filter tasks: must have a gameday field
-  const allGdTasks=tasks.filter(t=>!t.isRef&&t.gameday&&t.gameday.trim());
-
-  // Apply team tab filter (by team field)
-  const teamFiltered=teamTab==="ALL"?allGdTasks:allGdTasks.filter(t=>(t.team||"").toUpperCase()===teamTab);
-
-  // Apply game context filter: only show tasks whose gameday matches the active context for their team
-  // If no context is set for any team, show everything (so you can still browse)
+  const computedCtx=useMemo(()=>{const r={};GAMEDAY_TEAMS.forEach(team=>{const d=gdCtx[team];r[team]=d?getGamedayLabel(d):null;});return r;},[gdCtx]);
+  const activeTeams=GAMEDAY_TEAMS.filter(t=>gdCtx[t]&&computedCtx[t]!==null);
   const hasAnyContext=activeTeams.length>0;
+
+  const allGdTasks=tasks.filter(t=>!t.isRef&&t.gameday&&t.gameday.trim());
+  const teamFiltered=teamTab==="ALL"?allGdTasks:allGdTasks.filter(t=>(t.team||"").toUpperCase()===teamTab);
   const ctxFiltered=hasAnyContext
-    ? teamFiltered.filter(t=>{
-        const team=(t.team||"").toUpperCase();
-        if(!team)return false;
-        const ctxDay=gdCtx[team];
-        if(!ctxDay)return false;
-        return t.gameday===ctxDay;
-      })
+    ? teamFiltered.filter(t=>{const team=(t.team||"").toUpperCase();if(!team)return false;const todayLabel=computedCtx[team];if(!todayLabel)return false;return t.gameday===todayLabel;})
     : teamFiltered;
 
-  // Group by gameday type for display
+  const sorted=sortByGametime(ctxFiltered);
+
+  // Group by GAMETIME when context active, by gameday label when browsing
   const groups={};
-  ctxFiltered.forEach(t=>{const k=t.gameday;if(!groups[k])groups[k]=[];groups[k].push(t);});
-  const orderedKeys=GAMEDAY_OPTS.filter(o=>o&&groups[o]);
-  const unmatched=Object.keys(groups).filter(k=>!GAMEDAY_OPTS.includes(k));
-  const allKeys=[...orderedKeys,...unmatched];
+  sorted.forEach(t=>{const k=hasAnyContext?(t.gametime||"— No Gametime —"):t.gameday;if(!groups[k])groups[k]=[];groups[k].push(t);});
+  const gtOrdered=Object.keys(GAMETIME_ORDER_MAP);
+  const gdOrdered=GAMEDAY_OPTS.filter(o=>o);
+  const orderedBase=hasAnyContext?gtOrdered:gdOrdered;
+  const matchedKeys=orderedBase.filter(k=>groups[k]);
+  const unmatchedKeys=Object.keys(groups).filter(k=>!orderedBase.includes(k));
+  const groupKeys=[...matchedKeys,...unmatchedKeys];
 
   const teamTabs=["ALL",...GAMEDAY_TEAMS];
-  const teamColors={REDS:"#FF453A",BENGALS:"#FF9F0A",BEARCATS:"#BF5AF2",FCCINCY:"#0A84FF",CYCLONES:"#30D158",XAVIER:"#FF6B35",ALL:gdLime};
 
-  const Sec=({gdKey,items})=>(
-    <div style={{marginBottom:22}}>
-      <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:8,paddingLeft:2}}>
-        <div style={{width:6,height:6,borderRadius:"50%",background:gdLime,flexShrink:0}}/>
-        <span style={{fontSize:11,fontWeight:700,color:gdLime,letterSpacing:.8,textTransform:"uppercase"}}>{gdKey}</span>
-        <span style={{fontSize:11,color:gdMu,marginLeft:2}}>{items.length}</span>
-        <div style={{flex:1,height:1,background:gdLime+"44",marginLeft:4}}/>
+  const Sec=({grpKey,items})=>{
+    const color=teamTab==="ALL"?gdLime:(TEAM_COLORS[teamTab]||gdLime);
+    return(
+      <div style={{marginBottom:20}}>
+        <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:8,paddingLeft:2}}>
+          <div style={{width:6,height:6,borderRadius:"50%",background:color,flexShrink:0}}/>
+          <span style={{fontSize:11,fontWeight:700,color,letterSpacing:.8,textTransform:"uppercase"}}>{grpKey}</span>
+          <span style={{fontSize:11,color:gdMu,marginLeft:2}}>{items.length}</span>
+          <div style={{flex:1,height:1,background:color+"33",marginLeft:4}}/>
+        </div>
+        {items.map(t=><TaskCard key={t.id} task={t} buckets={buckets} onEdit={onEdit} onDelete={onDelete} onCheck={onCheck} showBucket={true} listMode={true} readOnly={readOnly} celebrating={celebratingIds.has(t.id)} onDragStart={()=>{}} onDragOver={()=>{}} onDrop={()=>{}} isDragging={false}/>)}
       </div>
-      {items.map(t=><TaskCard key={t.id} task={t} buckets={buckets} onEdit={onEdit} onDelete={onDelete} onCheck={onCheck} showBucket={true} listMode={true} readOnly={readOnly} celebrating={celebratingIds.has(t.id)} onDragStart={()=>{}} onDragOver={()=>{}} onDrop={()=>{}} isDragging={false}/>)}
-    </div>
-  );
+    );
+  };
 
   return(
     <div style={{flex:1,display:"flex",flexDirection:"column",minHeight:0}}>
-      {/* Header */}
       <div style={{padding:"10px 16px 0",borderBottom:`1px solid ${gdBo}`,background:gdNav,flexShrink:0}}>
-        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
           <span style={{fontSize:12,fontWeight:700,color:gdLime,letterSpacing:.6,textTransform:"uppercase"}}>🏈 Gameday</span>
-          <span style={{fontSize:11,color:gdMu}}>{ctxFiltered.length} tasks</span>
+          <span style={{fontSize:11,color:gdMu}}>{sorted.length} tasks</span>
           <div style={{flex:1}}/>
           {hasAnyContext&&(
-            <div style={{display:"flex",gap:4,flexWrap:"wrap",justifyContent:"flex-end"}}>
-              {activeTeams.map(t=>(
-                <span key={t} style={{fontSize:9,fontWeight:700,padding:"2px 7px",borderRadius:99,background:(teamColors[t]||LIME)+"22",color:teamColors[t]||LIME,border:`1px solid ${(teamColors[t]||LIME)}44`,letterSpacing:.5}}>
-                  {t}: {gdCtx[t]}
-                </span>
-              ))}
+            <div style={{display:"flex",gap:3,flexWrap:"wrap",justifyContent:"flex-end"}}>
+              {activeTeams.map(t=>{const color=TEAM_COLORS[t]||gdLime;return<span key={t} style={{fontSize:9,fontWeight:700,padding:"2px 6px",borderRadius:99,background:color+"22",color,border:`1px solid ${color}44`}}>{t}: {computedCtx[t]}</span>;})}
             </div>
           )}
         </div>
-        {/* Team tabs */}
-        <div style={{display:"flex",gap:1,overflowX:"auto",scrollbarWidth:"none",paddingBottom:0}}>
+        <div style={{display:"flex",gap:0,overflowX:"auto",scrollbarWidth:"none"}}>
           {teamTabs.map(team=>{
             const active=teamTab===team;
-            const color=teamColors[team]||gdLime;
+            const color=TEAM_COLORS[team]||gdLime;
             return(
-              <button key={team} onClick={()=>setTeamTab(team)} style={{padding:"6px 13px",border:"none",background:"transparent",color:active?color:gdMu,fontWeight:active?800:400,fontSize:11,cursor:"pointer",fontFamily:"inherit",letterSpacing:.5,borderBottom:active?`2px solid ${color}`:"2px solid transparent",transition:"color .15s,border-color .15s",whiteSpace:"nowrap",flexShrink:0}}>
+              <button key={team} onClick={()=>setTeamTab(team)} style={{padding:"6px 12px",border:"none",background:"transparent",color:active?color:gdMu,fontWeight:active?800:400,fontSize:11,cursor:"pointer",fontFamily:"inherit",letterSpacing:.5,borderBottom:active?`2px solid ${color}`:"2px solid transparent",transition:"color .15s,border-color .15s",whiteSpace:"nowrap",flexShrink:0}}>
                 {team}
               </button>
             );
@@ -3919,38 +3959,36 @@ function GamedayView({tasks,buckets,onEdit,onCheck,onDelete,celebratingIds,readO
         </div>
       </div>
 
-      {/* Content */}
       <div style={{flex:1,overflowY:"auto",padding:"14px 16px",maxWidth:640,margin:"0 auto",width:"100%"}}>
         {!hasAnyContext&&(
           <div style={{padding:"10px 14px",borderRadius:9,background:gdLm?"#fffbf0":"#1a0e00",border:"1px solid #FF9F0A44",marginBottom:16,display:"flex",alignItems:"center",gap:10}}>
-            <span style={{fontSize:16}}>⚙</span>
+            <span style={{fontSize:18}}>📅</span>
             <div>
-              <div style={{fontSize:12,fontWeight:700,color:"#FF9F0A"}}>No game context set</div>
-              <div style={{fontSize:11,color:"#FF9F0A88"}}>Tap "Set Game Context" below to tell the app what game day it is for each team.</div>
+              <div style={{fontSize:12,fontWeight:700,color:"#FF9F0A"}}>No game dates set</div>
+              <div style={{fontSize:11,color:"#FF9F0A88"}}>Tap "Set Game Dates" below — enter each team's game date and the app figures out today's relationship automatically.</div>
             </div>
           </div>
         )}
-        {ctxFiltered.length===0&&hasAnyContext&&(
+        {sorted.length===0&&hasAnyContext&&(
           <div style={{textAlign:"center",padding:"56px 0",color:gdMu,fontSize:14}}>
             <div style={{fontSize:32,marginBottom:10}}>🏈</div>
-            No matching gameday tasks for current context
+            <div style={{marginBottom:6}}>No tasks match today's game context.</div>
+            <div style={{fontSize:12,opacity:.6}}>Make sure tasks have matching Team and Gameday fields.</div>
           </div>
         )}
-        {allKeys.map(k=><Sec key={k} gdKey={k} items={groups[k]}/>)}
+        {groupKeys.map(k=><Sec key={k} grpKey={k} items={groups[k]}/>)}
         {!readOnly&&<div style={{marginTop:8}}>
           {adding?<InlineAdd colId="do" boardId={boardId} onAdd={t=>{onAddTask(t);setAdding(false);}} onCancel={()=>setAdding(false)}/>
           :<button onClick={()=>setAdding(true)} style={{display:"flex",alignItems:"center",gap:6,background:"none",border:`1px dashed ${gdBo}`,borderRadius:9,cursor:"pointer",color:gdMu,fontSize:13,fontFamily:"inherit",padding:"9px 14px",width:"100%",justifyContent:"center"}} onMouseEnter={e=>{e.currentTarget.style.borderColor="#444";e.currentTarget.style.color=gdTx;}} onMouseLeave={e=>{e.currentTarget.style.borderColor=gdBo;e.currentTarget.style.color=gdMu;}}>+ Add Gameday Task</button>}
         </div>}
       </div>
 
-      {/* Bottom: Set Game Context button */}
       <div style={{padding:"10px 16px",borderTop:`1px solid ${gdBo}`,background:gdNav,flexShrink:0}}>
-        <button onClick={()=>setShowCtxModal(true)} style={{width:"100%",padding:"11px",borderRadius:10,border:`1px solid ${LIME}44`,background:gdLm?"#d8f5d0":"#0a140a",color:gdLime,fontWeight:800,fontSize:13,fontFamily:"inherit",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,letterSpacing:.3}}>
-          🏈 Set Game Context
+        <button onClick={()=>setShowCtxModal(true)} style={{width:"100%",padding:"11px",borderRadius:10,border:`1px solid ${LIME}44`,background:gdLm?"#d8f5d0":"#0a140a",color:gdLime,fontWeight:800,fontSize:13,fontFamily:"inherit",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+          📅 Set Game Dates
           {hasAnyContext&&<span style={{fontSize:11,fontWeight:400,opacity:.7}}>· {activeTeams.length} active</span>}
         </button>
       </div>
-
       {showCtxModal&&<GamedayContextModal initial={gdCtx} onClose={()=>setShowCtxModal(false)} onSave={saveCtx}/>}
     </div>
   );
@@ -4738,10 +4776,6 @@ function MainApp({user,board,allBoards,onSwitchBoard,onBack,onSignOut}){
             </div>
           </div>
           <div style={{display:"flex",alignItems:"center",gap:6}}>
-            <div style={{opacity:isToolView?.4:1,pointerEvents:isToolView?"none":"auto"}} title={isToolView?"Date filter ignored in Tool views":undefined}><DayFilterDropdown value={dayFilter} onChange={setDayFilter}/></div>
-            {/* Bucket dropdown */}
-            <BucketDropdown tabs={tabs} activeTab={activeTab} onSelect={setActiveTab}/>
-
           </div>
         </div>
       </div>
